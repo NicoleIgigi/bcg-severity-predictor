@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BCG Vaccine Adverse Effect Severity Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">BCG Vaccine Adverse Effect Severity Predictor</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Patient Information</h5>
+                <form action="/predict" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="age">Age (years)</label>
+                                <input type="number" class="form-control" id="age" name="age" step="0.1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sex">Sex</label>
+                                <select class="form-control" id="sex" name="sex" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="medication">Reported Medication</label>
+                                <input type="text" class="form-control" id="medication" name="medication" value="BCG Vaccine" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="route">Route of Administration</label>
+                                <select class="form-control" id="route" name="route" required>
+                                    <option value="Intradermal">Intradermal</option>
+                                    <option value="Subcutaneous">Subcutaneous</option>
+                                    <option value="Intramuscular">Intramuscular</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="time_to_onset">Time to Onset</label>
+                                <input type="text" class="form-control" id="time_to_onset" name="time_to_onset" placeholder="e.g., 3 days" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="event_location">Adverse Event Location</label>
+                                <select class="form-control" id="event_location" name="event_location" required>
+                                    <option value="Local">Local</option>
+                                    <option value="Systemic">Systemic</option>
+                                    <option value="Mixed">Mixed</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="organ_system">System Organ Class Affected</label>
+                                <select class="form-control" id="organ_system" name="organ_system" required>
+                                    <option value="General disorders and administration site conditions">General disorders and administration site conditions</option>
+                                    <option value="Skin and subcutaneous tissue disorders">Skin and subcutaneous tissue disorders</option>
+                                    <option value="Infections and infestations">Infections and infestations</option>
+                                    <option value="Immune system disorders">Immune system disorders</option>
+                                    <option value="Blood and lymphatic system disorders">Blood and lymphatic system disorders</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="mapped_term">Mapped Term 1</label>
+                                <input type="text" class="form-control" id="mapped_term" name="mapped_term" placeholder="e.g., Injection site inflammation" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="dose_number">1st or 2nd Dose</label>
+                                <select class="form-control" id="dose_number" name="dose_number" required>
+                                    <option value="1st dose">1st dose</option>
+                                    <option value="2nd dose">2nd dose</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="country">Country of Primary Source</label>
+                                <input type="text" class="form-control" id="country" name="country" value="Unknown">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="outcome">Outcome</label>
+                                <select class="form-control" id="outcome" name="outcome">
+                                    <option value="Recovered/resolved">Recovered/resolved</option>
+                                    <option value="Recovering/resolving">Recovering/resolving</option>
+                                    <option value="Not recovered/not resolved">Not recovered/not resolved</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="causality">Causality Assessment Conclusion</label>
+                                <select class="form-control" id="causality" name="causality">
+                                    <option value="Possible">Possible</option>
+                                    <option value="Probable">Probable</option>
+                                    <option value="Certain">Certain</option>
+                                    <option value="Unlikely">Unlikely</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden fields for required model inputs -->
+                    <input type="hidden" name="report_id" value="0">
+                    <input type="hidden" name="indication" value="Immunization">
+                    <input type="hidden" name="vaccine_type" value="BCG">
+                    
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary">Predict Severity</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

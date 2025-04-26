@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BCG Severity Prediction Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .severity-card {
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .severity-card.mild {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .severity-card.moderate {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+        .severity-card.severe {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .severity-card.unreported {
+            background-color: #e2e3e5;
+            border-color: #d6d8db;
+        }
+        .chart-container {
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">BCG Vaccine Adverse Effect Prediction</h1>
+        
+        <div class="card severity-card {{ 'mild' if severity == 'Mild' else 'moderate' if severity == 'Moderate' else 'severe' if severity == 'Severe' else 'unreported' }}">
+            <div class="card-body">
+                <h2 class="card-title">Predicted Severity: {{ severity }}</h2>
+                <p class="card-text"><strong>Confidence:</strong> {{ confidence }}</p>
+                <p class="card-text"><strong>Recommendation:</strong> {{ recommendation }}</p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Probability Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="probabilityChart"></canvas>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Severity Class</th>
+                                <th>Probability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class, prob in probabilities.items() %}
+                            <tr>
+                                <td>{{ class }}</td>
+                                <td>{{ "%.2f%%" | format(prob * 100) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a href="/" class="btn btn-primary">Predict Another Case</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('probabilityChart').getContext('2d');
+            
+            // Parse probabilities from Flask template
+            const probabilities = {
+                {% for class, prob in probabilities.items() %}
+                '{{ class }}': {{ prob }},
+                {% endfor %}
+            };
+            
+            // Generate colors based on severity
+            const getColor = (label) => {
+                if (label === 'Mild') return 'rgba(40, 167, 69, 0.7)';
+                if (label === 'Moderate') return 'rgba(255, 193, 7, 0.7)';
+                if (label === 'Severe') return 'rgba(220, 53, 69, 0.7)';
+                if (label === 'Unreported') return 'rgba(108, 117, 125, 0.7)';
+                return 'rgba(0, 123, 255, 0.7)';
+            };
+            
+            const labels = Object.keys(probabilities);
+            const data = Object.values(probabilities).map(p => p * 100);
+            const backgroundColor = labels.map(getColor);
+            
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Probability (%)',
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderColor: backgroundColor.map(c => c.replace('0.7', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Probability (%)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Severity Prediction Probabilities',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
